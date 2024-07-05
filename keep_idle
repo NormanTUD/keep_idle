@@ -1,5 +1,13 @@
 #!/bin/bash
 
+ps auxf | grep keep_idle | grep bash | sed -e "s#^$USER\s*##" | sed -e 's#\s.*##' | grep -v "$$"
+ALREADY_RUNNING_PID=$(ps auxf | grep keep_idle | grep bash | sed -e "s#^$USER\s*##" | sed -e 's#\s.*##' | grep -v "$$")
+
+if [[ $(echo "$ALREADY_RUNNING_PID" | wc -l) -gt 1 ]]; then
+	kill -9 $ALREADY_RUNNING_PID
+	exit 0
+fi
+
 MOVEMENTS=(-1 1)
 COUNTER=0
 SLEEPTIME=100
