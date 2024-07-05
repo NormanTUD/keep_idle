@@ -1,0 +1,29 @@
+#!/bin/bash
+
+MOVEMENTS=(-1 1)
+COUNTER=0
+SLEEPTIME=100
+
+while :
+do
+    IDLETIME=$(xprintidle)
+    IDLETIME=$(($IDLETIME / 1000))
+
+    if [[ $IDLETIME -gt $SLEEPTIME ]]; then
+        MOUSE_X=$(xinput --query-state $(xinput --list | grep -i mouse | cut -d= -f2 | cut -f1 | head -1) | grep "valuator.0" | sed -e 's#.*=##')
+        MOUSE_Y=$(xinput --query-state $(xinput --list | grep -i mouse | cut -d= -f2 | cut -f1 | head -1) | grep "valuator.1" | sed -e 's#.*=##')
+
+        NEW_X=$(($MOUSE_X + ${MOVEMENTS[$COUNTER % 2]}))
+        NEW_Y=$(($MOUSE_Y + ${MOVEMENTS[$COUNTER % 2]}))
+
+        if [[ $((COUNTER % 2)) -eq 0 ]]; then
+            xdotool mousemove $NEW_X $MOUSE_Y
+        else
+            xdotool mousemove $MOUSE_X $NEW_Y
+        fi
+
+        COUNTER=$(($COUNTER + 1))
+    fi
+
+    sleep $SLEEPTIME
+done
