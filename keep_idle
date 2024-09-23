@@ -1,42 +1,12 @@
 #!/bin/bash
 
-# Standard-Schlafzeit auf 60 Sekunden setzen, falls kein Parameter übergeben wird
 SLEEPTIME=${1:-60}
 
-echo "Schlafzeit auf $SLEEPTIME Sekunden gesetzt."
-
-# Überprüfen, ob das Skript bereits läuft
-echo "Überprüfe, ob das Skript bereits läuft..."
-ALREADY_RUNNING_PID=$(ps auxf | grep keep_idle | grep bash | sed -e "s#^$USER\s*##" | sed -e 's#\s.*##' | grep -v "$$")
-
-if [[ $(echo "$ALREADY_RUNNING_PID" | wc -l) -gt 1 ]]; then
-    echo "Skript läuft bereits, Prozess mit PID $ALREADY_RUNNING_PID wird beendet."
-    kill -9 $ALREADY_RUNNING_PID
-    exit 0
-fi
-
-echo "Skript läuft nicht bereits, fahre fort."
-
-# Bewegung nach links und rechts in Pixeln
-
-while :
-do
-    # Zeit, die der Computer untätig war, in Sekunden
-    IDLETIME=$(xprintidle)
-    IDLETIME=$(($IDLETIME / 1000))
-
-    echo "IDLE-Zeit: $IDLETIME Sekunden."
-
+while true; do
     if [[ $IDLETIME -gt $SLEEPTIME ]]; then
         # Aktuelle Mausposition ermitteln
 	xdotool key 0x00
-
-        # Zähler erhöhen für nächste Bewegung
-    else
-        echo "IDLE-Zeit zu gering. Keine Bewegung nötig."
     fi
 
-    # Warten vor der nächsten Bewegung
-    echo "Schlafe für $SLEEPTIME Sekunden."
     sleep $SLEEPTIME
 done
