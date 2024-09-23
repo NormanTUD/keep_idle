@@ -18,10 +18,6 @@ fi
 echo "Skript läuft nicht bereits, fahre fort."
 
 # Bewegung nach links und rechts in Pixeln
-MOVEMENTS=(-1 1)
-COUNTER=0
-
-echo "Start der Mausbewegungsschleife mit Schlafzeit $SLEEPTIME Sekunden."
 
 while :
 do
@@ -33,21 +29,9 @@ do
 
     if [[ $IDLETIME -gt $SLEEPTIME ]]; then
         # Aktuelle Mausposition ermitteln
-        MOUSE_X=$(xinput --query-state $(xinput --list | grep -i mouse | cut -d= -f2 | cut -f1 | head -1) | grep "valuator.0" | sed -e 's#.*=##')
-        MOUSE_Y=$(xinput --query-state $(xinput --list | grep -i mouse | cut -d= -f2 | cut -f1 | head -1) | grep "valuator.1" | sed -e 's#.*=##')
-
-        echo "Aktuelle Mausposition: X=$MOUSE_X, Y=$MOUSE_Y."
-
-        # Neue Position berechnen: abwechselnd nach links oder rechts bewegen
-        NEW_X=$(($MOUSE_X + ${MOVEMENTS[$COUNTER % 2]}))
-        echo "Bewege Maus zu X=$NEW_X (Schritt: ${MOVEMENTS[$COUNTER % 2]} Pixel)."
-
-        # Mausbewegung durchführen
-        xdotool mousemove $NEW_X $MOUSE_Y
+	xdotool key 0x00
 
         # Zähler erhöhen für nächste Bewegung
-        COUNTER=$(($COUNTER + 1))
-        echo "Mausbewegung durchgeführt. COUNTER=$COUNTER."
     else
         echo "IDLE-Zeit zu gering. Keine Bewegung nötig."
     fi
